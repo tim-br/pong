@@ -38,8 +38,6 @@
   (do
     (swap! x-coord #(+ % (* 10 (first @direction))))
     (swap! y-coord #(+ % (* 10 (second @direction)))))
-  (clear-background)
-  (draw-background)
   (. ctx beginPath)
   (. ctx arc @x-coord, @y-coord, 15, 0, (* 2 Math/PI))
   (aset ctx "fillStyle" "rgb(200, 0, 0)")
@@ -48,26 +46,28 @@
 
 (defn draw-paddle
   []
+  (clear-background)
+  (draw-background)
   (aset ctx "fillStyle" "rgb(200, 0, 0)")
   (. ctx fillRect (first @paddle-pos) (second @paddle-pos) 20 110))
 
 (defn init
   []
   (draw-background)
-  (. js/window setInterval #(draw-ball) 50))
+  (draw-paddle)
+  #_(. js/window setInterval #(draw-ball) 50))
 
-#_(init)
+(init)
 
-(draw-background)
-;(draw-paddle)
+#_(draw-background)
 
 
 ;; code for players
 (defn move
       [e]
-      (case (aget e "keyCode")
-            38 (swap! paddle-pos update-in [1] #(- % 5))
-            40 (swap! paddle-pos update-in [1] #(+ % 5)))
-      (draw-paddle))
+  (case (aget e "keyCode")
+        38 (swap! paddle-pos update-in [1] #(- % 5))
+        40 (swap! paddle-pos update-in [1] #(+ % 5)))
+  (draw-paddle))
 
 (.addEventListener js/document "keydown" move false)
