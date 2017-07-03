@@ -4,6 +4,11 @@
 
 (def ctx (. canvas getContext "2d"))
 
+(def paddle-pos (atom [10 50]))
+
+;(aset ctx "fillStyle" "rgb(0, 0, 0)")
+;(. ctx fillRect 0, 0, (aget canvas "height"), (aget canvas "width"))
+
 (defn draw-background
   []
   (aset ctx "fillStyle" "rgb(0, 0, 0)")
@@ -41,20 +46,28 @@
   (. ctx fill)
   (. ctx stroke))
 
+(defn draw-paddle
+  []
+  (aset ctx "fillStyle" "rgb(200, 0, 0)")
+  (. ctx fillRect (first @paddle-pos) (second @paddle-pos) 20 110))
+
 (defn init
   []
   (draw-background)
   (. js/window setInterval #(draw-ball) 50))
 
-(init)
+#_(init)
 
-(comment
-  ;; code for players
-  (defn move
-        [e]
-        (case (aget e "keyCode")
-              37 (swap! x-coord #(- % 5))
-              38 (swap! y-coord #(- % 5))
-              39 (swap! x-coord #(+ % 5))
-              40 (swap! y-coord #(+ % 5)))
-        (draw-ball)))
+(draw-background)
+;(draw-paddle)
+
+
+;; code for players
+(defn move
+      [e]
+      (case (aget e "keyCode")
+            38 (swap! paddle-pos update-in [1] #(- % 5))
+            40 (swap! paddle-pos update-in [1] #(+ % 5)))
+      (draw-paddle))
+
+(.addEventListener js/document "keydown" move false)
